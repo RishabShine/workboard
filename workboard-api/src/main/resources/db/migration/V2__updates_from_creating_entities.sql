@@ -2,3 +2,6 @@ ALTER TABLE users
     ALTER COLUMN email SET NOT NULL,
     ALTER COLUMN password_hash SET NOT NULL;
 
+ALTER TABLE tickets
+    ALTER COLUMN status SET DEFAULT 'BACKLOG';
+
