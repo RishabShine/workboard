@@ -44,20 +44,17 @@ public class TagRepositoryCustomImpl implements TagRepositoryCustom {
 
         // finding all tag IDs that correspond to the ticket
         CriteriaQuery<TicketTag> cq = cb.createQuery(TicketTag.class);
-
         Root<TicketTag> ticketTag = cq.from(TicketTag.class);
-        List<Predicate> predicates = new ArrayList<>();
+        cq.where(cb.equal(ticketTag.get("ticket").get("id"), ticketId));
 
-        predicates.add(cb.equal(ticketTag.get("ticket").get("id"), ticketId));
+        List<TicketTag> ticketTags = entityManager
+                .createQuery(cq)
+                .getResultList();
 
-        cq.where(predicates.toArray(new Predicate[0]));
-
-//        List<Long> ticketTags = entityManager.createQuery(cq).getResultList()
-//                .forEach(tt -> tt.getTicket().getId());
-//
-//        return entityManager.createQuery(cq).getResultList();
-
-        return null;
+        return ticketTags
+                .stream()
+                .map(TicketTag::getTag)
+                .toList();
     }
 
 }
