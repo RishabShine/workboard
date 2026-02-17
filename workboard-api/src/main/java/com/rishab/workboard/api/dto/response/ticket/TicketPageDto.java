@@ -11,12 +11,14 @@ public class TicketPageDto {
 
     private List<TicketListItemDto> tickets;
 
+    // TODO: add logic for scrolling / pages
+
     // the number of pages of tickets
-    private int page;
+    //private int page;
 
     // private int size;
 
     // is there a next page
-    private boolean hasNext;
+    //private boolean hasNext;
 
 }
