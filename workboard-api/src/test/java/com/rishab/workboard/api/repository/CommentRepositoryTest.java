@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CommentRepositoryTest {
 
     @Autowired
-    CommentRepository commentRepository; // normal JPA repo
+    CommentRepository commentRepository;
 
     @Autowired
     TicketRepository ticketRepository;
