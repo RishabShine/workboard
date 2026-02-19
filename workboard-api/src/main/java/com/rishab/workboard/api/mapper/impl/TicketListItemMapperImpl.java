@@ -29,16 +29,23 @@ public class TicketListItemMapperImpl implements TicketListItemMapper {
                                    List<Tag> tags) {
 
         TicketListItemDto ticketListItem = new TicketListItemDto();
+        /*
+        TODO: this code is re-used in TicketDetail, can re-use instead of copy and paste
+         */
         ticketListItem.setId(ticket.getId());
         ticketListItem.setTitle(ticket.getTitle());
         ticketListItem.setStatus(ticket.getStatus());
-        ticketListItem.setAssignee(userMapper.toDto(ticket.getAssignedTo()));
+        ticketListItem.setAssignee(
+                ticket.getAssignedTo() == null ? null : userMapper.toDto(ticket.getAssignedTo())
+        );
         ticketListItem.setTags(
                 tags.stream()
                         .map(tagMapper::toDto)
                         .toList()
         );
-        ticketListItem.setMilestone(milestoneMapper.toDto(ticket.getMilestone()));
+        ticketListItem.setMilestone(
+                ticket.getMilestone() == null ? null : milestoneMapper.toDto(ticket.getMilestone())
+        );
         ticketListItem.setNumComments(numComments);
 
         return ticketListItem;

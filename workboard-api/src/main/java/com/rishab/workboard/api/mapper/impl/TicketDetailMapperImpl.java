@@ -31,13 +31,17 @@ public class TicketDetailMapperImpl implements TicketDetailMapper {
         ticketDetails.setId(ticket.getId());
         ticketDetails.setTitle(ticket.getTitle());
         ticketDetails.setStatus(ticket.getStatus());
-        ticketDetails.setAssignee(userMapper.toDto(ticket.getAssignedTo()));
+        ticketDetails.setAssignee(
+                ticket.getAssignedTo() == null ? null : userMapper.toDto(ticket.getAssignedTo())
+        );
         ticketDetails.setTags(
                 tags.stream()
                         .map(tagMapper::toDto)
                         .toList()
         );
-        ticketDetails.setMilestone(milestoneMapper.toDto(ticket.getMilestone()));
+        ticketDetails.setMilestone(
+                ticket.getMilestone() == null ? null : milestoneMapper.toDto(ticket.getMilestone())
+        );
         ticketDetails.setNumComments(numComments);
         ticketDetails.setBody(ticket.getBody());
         ticketDetails.setCreatedAt(ticket.getCreatedAt());
