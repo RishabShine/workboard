@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 @Table(name = "project_invites")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class ProjectInvite {
 
     @Id
