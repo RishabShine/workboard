@@ -27,12 +27,12 @@ import java.util.List;
 public class ProjectServiceImpl implements ProjectService {
 
     // repositories
-    private ProjectRepository projectRepository;
-    private TagRepository tagRepository;
-    private MemberRepository memberRepository;
-    private MilestoneRepository milestoneRepository;
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
+    private final ProjectRepository projectRepository;
+    private final TagRepository tagRepository;
+    private final MemberRepository memberRepository;
+    private final MilestoneRepository milestoneRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     // mappers
     private ProjectDetailMapper projectDetailMapper;

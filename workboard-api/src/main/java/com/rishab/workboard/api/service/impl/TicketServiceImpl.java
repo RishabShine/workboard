@@ -1,6 +1,9 @@
 package com.rishab.workboard.api.service.impl;
 
+import com.rishab.workboard.api.domain.Member;
+import com.rishab.workboard.api.domain.Role;
 import com.rishab.workboard.api.domain.Ticket;
+import com.rishab.workboard.api.domain.id.MemberId;
 import com.rishab.workboard.api.dto.request.CreateTicketRequest;
 import com.rishab.workboard.api.dto.request.UpdateTicketRequest;
 import com.rishab.workboard.api.dto.response.ticket.TicketDetailDto;
@@ -12,6 +15,7 @@ import com.rishab.workboard.api.repository.TagRepository;
 import com.rishab.workboard.api.repository.TicketRepository;
 import com.rishab.workboard.api.repository.custom.CommentRepositoryCustom;
 import com.rishab.workboard.api.service.TicketService;
+import com.rishab.workboard.api.service.exceptions.ForbiddenException;
 import com.rishab.workboard.api.service.exceptions.NotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -45,12 +49,27 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public List<TicketListItemDto> listTickets(Long projectId, Long currentUserId) {
-        return null;
+        requireProjectMember(projectId, currentUserId);
+
+        List<Ticket> tickets = ticketRepository.findTicketsByProject(projectId);
+
+        return tickets.stream()
+                .map(t -> ticketListItemMapper.toDto(
+                        t,
+                        commentRepository.getNumComments(t.getId()),
+                        tagRepository.findTagsByTicketId(t.getId())
+                ))
+                .toList();
     }
 
     @Override
     public TicketDetailDto getTicket(Long ticketId, Long currentUserId) {
-        return null;
+        Ticket ticket = requireTicketAccess(ticketId, currentUserId);
+
+        int numComments = commentRepository.getNumComments(ticketId);
+        var tags = tagRepository.findTagsByTicketId(ticketId);
+
+        return ticketDetailMapper.toDto(ticket, numComments, tags);
     }
 
     @Override
@@ -66,7 +85,26 @@ public class TicketServiceImpl implements TicketService {
 
     }
 
-    private void requireTicketAccess(Long ticketId, Long currentUserId) {
+    /*
+    helper methods for project / ticket access
+     */
+    private Ticket requireTicketAccess(Long ticketId, Long currentUserId) {
 
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new NotFoundException("Ticket not found"));
+
+        Long projectId = ticket.getProject().getId();
+
+        if (!memberRepository.isUserInProject(projectId, currentUserId)) {
+            throw new ForbiddenException("You are not a member of this project");
+        }
+
+        return ticket;
+    }
+
+    private void requireProjectMember(Long projectId, Long currentUserId) {
+        if (!memberRepository.isUserInProject(projectId, currentUserId)) {
+            throw new ForbiddenException("You are not a member of this project");
+        }
     }
 }
