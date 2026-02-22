@@ -72,7 +72,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(() -> new NotFoundException("Project not found"));
 
         // getting additional project detail
-        List<Milestone> projectMilestones = milestoneRepository.getMilestonesByProject(project);
+        List<Milestone> projectMilestones = milestoneRepository.getMilestonesByProjectId(project.getId());
         List<Tag> projectTags = tagRepository.FindTagsByProjectId(projectId);
 
         return projectDetailMapper.toDto(project, projectMilestones, projectTags, userRole);

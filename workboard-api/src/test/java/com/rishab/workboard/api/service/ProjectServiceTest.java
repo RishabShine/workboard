@@ -164,7 +164,7 @@ class ProjectServiceTest {
         assertThat(saved.getCreatedBy().getId()).isEqualTo(user.getId());
 
         // Assert - milestones/tags linked to project
-        List<Milestone> milestones = milestoneRepository.getMilestonesByProject(saved);
+        List<Milestone> milestones = milestoneRepository.getMilestonesByProjectId(saved.getId());
         assertThat(milestones).extracting(Milestone::getName)
                 .containsExactlyInAnyOrder("Backlog", "Sprint 1");
 

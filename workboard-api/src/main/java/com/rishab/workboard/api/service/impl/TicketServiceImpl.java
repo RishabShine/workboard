@@ -1,7 +1,6 @@
 package com.rishab.workboard.api.service.impl;
 
 import com.rishab.workboard.api.domain.*;
-import com.rishab.workboard.api.domain.id.MemberId;
 import com.rishab.workboard.api.dto.request.CreateTicketRequest;
 import com.rishab.workboard.api.dto.request.UpdateTicketRequest;
 import com.rishab.workboard.api.dto.response.ticket.TicketDetailDto;

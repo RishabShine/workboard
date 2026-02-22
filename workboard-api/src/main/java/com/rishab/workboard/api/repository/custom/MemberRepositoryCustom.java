@@ -1,5 +1,6 @@
 package com.rishab.workboard.api.repository.custom;
 
+import com.rishab.workboard.api.domain.Member;
 import com.rishab.workboard.api.domain.Project;
 import com.rishab.workboard.api.domain.Role;
 
@@ -12,5 +13,7 @@ public interface MemberRepositoryCustom {
     boolean isUserInProject(Long projectId, Long userId);
 
     List<Project> findAllProjectsByUserId(Long userId);
+
+    List<Member> findAllMembersByProject(Long projectId);
 
 }
