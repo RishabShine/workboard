@@ -78,7 +78,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public List<Member> findAllMembersByProject(Long projectId) {
+    public List<Member> findAllMembersByProjectId(Long projectId) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Member> cq = cb.createQuery(Member.class);
 

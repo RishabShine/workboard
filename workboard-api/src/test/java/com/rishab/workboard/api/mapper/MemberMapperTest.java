@@ -37,7 +37,7 @@ public class MemberMapperTest {
         member.setRole(role);
         member.setJoinedOn(OffsetDateTime.now());
 
-        MemberDto dto = memberMapper.toDto(user, member);
+        MemberDto dto = memberMapper.toDto(member);
 
         assertThat(dto).isNotNull();
         assertThat(dto.getUser()).isNotNull();

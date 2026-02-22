@@ -1,6 +1,10 @@
 package com.rishab.workboard.api.service.impl;
 
 import com.rishab.workboard.api.domain.Member;
+import com.rishab.workboard.api.domain.Project;
+import com.rishab.workboard.api.domain.ProjectInvite;
+import com.rishab.workboard.api.domain.User;
+import com.rishab.workboard.api.domain.enums.InviteStatus;
 import com.rishab.workboard.api.dto.request.CreateProjectInviteRequest;
 import com.rishab.workboard.api.dto.request.UpdateMemberRequest;
 import com.rishab.workboard.api.dto.response.project.MemberDto;
@@ -10,6 +14,9 @@ import com.rishab.workboard.api.mapper.ProjectInviteMapper;
 import com.rishab.workboard.api.service.MemberService;
 import com.rishab.workboard.api.repository.*;
 import com.rishab.workboard.api.service.exceptions.ForbiddenException;
+import com.rishab.workboard.api.service.exceptions.InviteAlreadyPendingException;
+import com.rishab.workboard.api.service.exceptions.NotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,19 +54,51 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public List<MemberDto> listMembers(Long projectId, Long currentUserId) {
         requireProjectMember(projectId, currentUserId);
-
-        // Assumes you have a scoped repo method. If not, add it:
-        // List<Member> findByProjectId(Long projectId);
-        List<Member> members = memberRepository.findMemberByProject(projectId);
+        List<Member> members = memberRepository.findAllMembersByProjectId(projectId);
 
         return members.stream()
                 .map(memberMapper::toDto)
                 .toList();
     }
 
+    /*
+    this method will create an invite, or if there is an existing invite with the same recipient, project
+    and is PENDING, will return a InviteAlreadyPendingException
+     */
     @Override
+    @Transactional
     public ProjectInviteDto createInvite(Long projectId, CreateProjectInviteRequest req, Long currentUserId) {
-        return null;
+        requireProjectMember(projectId, currentUserId);
+
+        Long recipientId = req.getRecipientUserId();
+
+        // recipient must exist
+        User recipient = userRepository.findById(recipientId)
+                .orElseThrow(() -> new NotFoundException("Recipient user not found"));
+
+        // can't invite someone already in the project
+        if (memberRepository.isUserInProject(projectId, recipientId)) {
+            throw new ForbiddenException("User is already a member of this project");
+        }
+
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundException("Project not found"));
+        User inviter = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new NotFoundException("Invite sender not found"));
+
+        ProjectInvite invite = new ProjectInvite();
+        invite.setInvitedBy(inviter);
+        invite.setProject(project);
+        invite.setRecipient(recipient);
+        // status is by defualt PENDING
+
+        try {
+            ProjectInvite saved = projectInviteRepository.save(invite);
+            return projectInviteMapper.toDto(saved);
+        } catch (DataIntegrityViolationException e) {
+            // recipient + project + pending must be unique
+            throw new InviteAlreadyPendingException();
+        }
     }
 
     @Override

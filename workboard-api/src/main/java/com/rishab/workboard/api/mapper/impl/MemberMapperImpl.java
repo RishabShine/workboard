@@ -22,11 +22,11 @@ public class MemberMapperImpl implements MemberMapper {
     }
 
     @Override
-    public MemberDto toDto(User user, Member member) {
+    public MemberDto toDto(Member member) {
 
         MemberDto memberDto = new MemberDto();
-        memberDto.setUser(userMapper.toDto(user));
-        memberDto.setEmail(user.getEmail());
+        memberDto.setUser(userMapper.toDto(member.getUser()));
+        memberDto.setEmail(member.getUser().getEmail());
         memberDto.setRole(roleMapper.toDto(member.getRole()));
         memberDto.setJoinedOn(member.getJoinedOn());
 

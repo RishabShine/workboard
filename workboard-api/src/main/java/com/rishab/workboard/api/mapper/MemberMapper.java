@@ -6,6 +6,6 @@ import com.rishab.workboard.api.dto.response.project.MemberDto;
 
 public interface MemberMapper {
 
-    MemberDto toDto(User user, Member member);
+    MemberDto toDto(Member member);
 
 }

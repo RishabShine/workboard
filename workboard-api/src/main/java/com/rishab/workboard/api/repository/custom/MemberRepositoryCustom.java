@@ -14,6 +14,6 @@ public interface MemberRepositoryCustom {
 
     List<Project> findAllProjectsByUserId(Long userId);
 
-    List<Member> findAllMembersByProject(Long projectId);
+    List<Member> findAllMembersByProjectId(Long projectId);
 
 }
