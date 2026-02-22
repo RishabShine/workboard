@@ -1,9 +1,6 @@
 package com.rishab.workboard.api.service.impl;
 
-import com.rishab.workboard.api.domain.Member;
-import com.rishab.workboard.api.domain.Project;
-import com.rishab.workboard.api.domain.ProjectInvite;
-import com.rishab.workboard.api.domain.User;
+import com.rishab.workboard.api.domain.*;
 import com.rishab.workboard.api.domain.enums.InviteStatus;
 import com.rishab.workboard.api.dto.request.CreateProjectInviteRequest;
 import com.rishab.workboard.api.dto.request.UpdateMemberRequest;
@@ -104,6 +101,36 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void acceptInvite(Long inviteId, Long currentUserId) {
+        ProjectInvite invite = requireInviteRecipient(inviteId, currentUserId);
+
+        if (invite.getStatus() != InviteStatus.PENDING) {
+            throw new ForbiddenException("Invite is not pending");
+        }
+
+        Project project = invite.getProject();
+        User recipient = invite.getRecipient();
+
+        // If already a member, just mark accepted
+        if (!memberRepository.isUserInProject(project.getId(), recipient.getId())) {
+
+            // TODO: improve logic for getting and creating default role
+            Role memberRole = roleRepository.findByProjectIdAndName(project.getId(), "MEMBER")
+                    .orElseGet(() -> {
+                        Role role = new Role();
+                        role.setProject(project);
+                        role.setName("MEMBER");
+                        role.setCreatedBy(project.getCreatedBy()); // satisfy not-null
+                        return roleRepository.save(role);
+                    });
+
+            Member member = new Member(recipient, project);
+            member.setRole(memberRole);
+
+            memberRepository.save(member);
+        }
+
+        invite.setStatus(InviteStatus.ACCEPTED);
+        projectInviteRepository.save(invite);
     }
 
     @Override
@@ -121,8 +148,15 @@ public class MemberServiceImpl implements MemberService {
     checks if the current user accepting / rejecting an invite is the intended recipient,
     if not throws an error
      */
-    private void requireInviteRecipient(Long inviteId, Long currentUserId) {
+    private ProjectInvite requireInviteRecipient(Long inviteId, Long currentUserId) {
+        ProjectInvite invite = projectInviteRepository.findById(inviteId)
+                .orElseThrow(() -> new NotFoundException("Invite not found"));
 
+        if (!invite.getRecipient().getId().equals(currentUserId)) {
+            throw new ForbiddenException("You are not the recipient of this invite");
+        }
+
+        return invite;
     }
 
     private void requireProjectMember(Long projectId, Long currentUserId) {
