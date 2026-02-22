@@ -32,6 +32,7 @@ public class ProjectServiceImpl implements ProjectService {
     private MemberRepository memberRepository;
     private MilestoneRepository milestoneRepository;
     private UserRepository userRepository;
+    private RoleRepository roleRepository;
 
     // mappers
     private ProjectDetailMapper projectDetailMapper;
@@ -45,7 +46,8 @@ public class ProjectServiceImpl implements ProjectService {
                               TagRepository tagRepository,
                               MemberRepository memberRepository,
                               MilestoneRepository milestoneRepository,
-                              UserRepository userRepository) {
+                              UserRepository userRepository,
+                              RoleRepository roleRepository) {
         this.projectRepository = projectRepository;
         this.projectDetailMapper = projectDetailMapper;
         this.projectListMapper = projectListMapper;
@@ -54,6 +56,7 @@ public class ProjectServiceImpl implements ProjectService {
         this.memberRepository = memberRepository;
         this.milestoneRepository = milestoneRepository;
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     public ProjectDetailDto getProjectDetail(Long projectId, Long currentUserId) {
@@ -114,6 +117,21 @@ public class ProjectServiceImpl implements ProjectService {
                 tagRepository.save(tag);
             });
         }
+
+        // create OWNER role for this project (simple MVP)
+        Role ownerRole = new Role();
+        ownerRole.setName("OWNER");
+        ownerRole.setProject(savedProject);
+        ownerRole.setCreatedBy(currentUser);
+        ownerRole = roleRepository.save(ownerRole);
+
+        // add creator as member with OWNER role
+        Member creatorMembership = new Member();
+        creatorMembership.setId(new MemberId(currentUser.getId(), savedProject.getId()));
+        creatorMembership.setUser(currentUser);
+        creatorMembership.setProject(savedProject);
+        creatorMembership.setRole(ownerRole);
+        memberRepository.save(creatorMembership);
 
         return projectOverviewMapper.toDto(savedProject);
     }

@@ -1,0 +1,72 @@
+package com.rishab.workboard.api.service.impl;
+
+import com.rishab.workboard.api.domain.Ticket;
+import com.rishab.workboard.api.dto.request.CreateTicketRequest;
+import com.rishab.workboard.api.dto.request.UpdateTicketRequest;
+import com.rishab.workboard.api.dto.response.ticket.TicketDetailDto;
+import com.rishab.workboard.api.dto.response.ticket.TicketListItemDto;
+import com.rishab.workboard.api.mapper.TicketDetailMapper;
+import com.rishab.workboard.api.mapper.TicketListItemMapper;
+import com.rishab.workboard.api.repository.MemberRepository;
+import com.rishab.workboard.api.repository.TagRepository;
+import com.rishab.workboard.api.repository.TicketRepository;
+import com.rishab.workboard.api.repository.custom.CommentRepositoryCustom;
+import com.rishab.workboard.api.service.TicketService;
+import com.rishab.workboard.api.service.exceptions.NotFoundException;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@Transactional(readOnly = true)
+public class TicketServiceImpl implements TicketService {
+
+    private TicketRepository ticketRepository;
+    private final MemberRepository memberRepository;
+    private final TagRepository tagRepository;
+    private final CommentRepositoryCustom commentRepository;
+    private final TicketListItemMapper ticketListItemMapper;
+    private final TicketDetailMapper ticketDetailMapper;
+
+    TicketServiceImpl(TicketRepository ticketRepository,
+                      MemberRepository memberRepository,
+                      TagRepository tagRepository,
+                      CommentRepositoryCustom commentRepository,
+                      TicketListItemMapper ticketListItemMapper,
+                      TicketDetailMapper ticketDetailMapper) {
+        this.ticketRepository = ticketRepository;
+        this.memberRepository = memberRepository;
+        this.tagRepository = tagRepository;
+        this.commentRepository = commentRepository;
+        this.ticketListItemMapper = ticketListItemMapper;
+        this.ticketDetailMapper = ticketDetailMapper;
+    }
+
+    @Override
+    public List<TicketListItemDto> listTickets(Long projectId, Long currentUserId) {
+        return null;
+    }
+
+    @Override
+    public TicketDetailDto getTicket(Long ticketId, Long currentUserId) {
+        return null;
+    }
+
+    @Override
+    public TicketDetailDto createTicket(Long projectId, CreateTicketRequest req, Long currentUserId) {
+        return null;
+    }
+
+    @Override
+    public TicketDetailDto updateTicket(Long ticketId, UpdateTicketRequest req, Long currentUserId) {
+
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+    }
+
+    private void requireTicketAccess(Long ticketId, Long currentUserId) {
+
+    }
+}
