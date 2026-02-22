@@ -10,7 +10,7 @@ public class UpdateMemberRequest {
 
     private Long userId;
 
-    private Role role;
+    private Long roleId;
 
     // project id in path
 

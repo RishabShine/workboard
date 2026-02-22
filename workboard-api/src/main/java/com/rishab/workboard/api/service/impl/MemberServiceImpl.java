@@ -2,6 +2,7 @@ package com.rishab.workboard.api.service.impl;
 
 import com.rishab.workboard.api.domain.*;
 import com.rishab.workboard.api.domain.enums.InviteStatus;
+import com.rishab.workboard.api.domain.id.MemberId;
 import com.rishab.workboard.api.dto.request.CreateProjectInviteRequest;
 import com.rishab.workboard.api.dto.request.UpdateMemberRequest;
 import com.rishab.workboard.api.dto.response.project.MemberDto;
@@ -136,12 +137,39 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void rejectInvite(Long inviteId, Long currentUserId) {
+        ProjectInvite invite = requireInviteRecipient(inviteId, currentUserId);
+
+        if (invite.getStatus() != InviteStatus.PENDING) {
+            throw new ForbiddenException("Invite is not pending");
+        }
+
+        invite.setStatus(InviteStatus.DECLINED);
+        projectInviteRepository.save(invite);
     }
+
 
     @Override
     @Transactional
     public MemberDto updateMemberRole(Long projectId, UpdateMemberRequest req, Long currentUserId) {
-        return null;
+        requireProjectMember(projectId, currentUserId);
+
+        Long targetUserId = req.getUserId();
+        Long roleId = req.getRoleId();
+
+        Member member = memberRepository.findById(new MemberId(targetUserId, projectId))
+                .orElseThrow(() -> new NotFoundException("Member not found"));
+
+        Role role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new NotFoundException("Role not found"));
+
+        if (!role.getProject().getId().equals(projectId)) {
+            throw new ForbiddenException("Role does not belong to this project");
+        }
+
+        member.setRole(role);
+
+        Member saved = memberRepository.save(member);
+        return memberMapper.toDto(saved);
     }
 
     /*

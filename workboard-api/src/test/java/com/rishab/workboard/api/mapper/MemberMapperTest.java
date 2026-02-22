@@ -36,6 +36,7 @@ public class MemberMapperTest {
         Member member = new Member();
         member.setRole(role);
         member.setJoinedOn(OffsetDateTime.now());
+        member.setUser(user);
 
         MemberDto dto = memberMapper.toDto(member);
 
