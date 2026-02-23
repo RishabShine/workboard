@@ -55,6 +55,11 @@ public class UserServiceImpl implements UserService {
 
         try {
             User saved = userRepository.save(user);
+            /*
+            forcing to commit changes now, so that if there are any violations
+            like email or username uniqueness, then an exception is thrown
+             */
+            userRepository.flush();
             return userMapper.toDto(saved);
         } catch (DataIntegrityViolationException e) {
             throw new ForbiddenException("Username or email already in use");
@@ -120,20 +125,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserSummaryDto> searchUsers(String q, Long currentUserId) {
-        // Optional: ensure caller exists (useful pre-JWT)
+
+        // ensure caller exists (useful pre-JWT)
         userRepository.findById(currentUserId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
+        // search query should not be empty or null
         if (q == null || q.trim().isEmpty()) {
             return List.of();
         }
 
         String query = q.trim();
 
-        // Replace this with your real method.
-        // Recommended repo method:
-        // List<User> findTop20ByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(String u, String e);
-        List<User> users = userRepository.findTop20ByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query);
+        /*
+        returns top 20 users that match the query on either email or username
+         */
+        List<User> users = userRepository.searchByUsernameOrEmail(query);
 
         return users.stream()
                 .map(userMapper::toDto)

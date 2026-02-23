@@ -12,6 +12,8 @@ public class UserSummaryDto {
 
     private String username;
 
+    String email;
+
     private String profileImageKey;
 
 }

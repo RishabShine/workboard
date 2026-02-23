@@ -47,9 +47,10 @@ public class User {
     @PreUpdate
     private void normalize() {
         if (email != null) {
-            email = email.toUpperCase();
-        } if (profileImageKey != null) {
-            profileImageKey = profileImageKey.toUpperCase();
+            email = email.toLowerCase().trim();
+        }
+        if (username != null) {
+            username = username.toLowerCase().trim();
         }
     }
 
