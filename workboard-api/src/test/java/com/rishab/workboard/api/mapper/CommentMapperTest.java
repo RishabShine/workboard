@@ -1,6 +1,7 @@
 package com.rishab.workboard.api.mapper;
 
 import com.rishab.workboard.api.domain.Comment;
+import com.rishab.workboard.api.domain.User;
 import com.rishab.workboard.api.dto.response.comment.CommentDto;
 import com.rishab.workboard.api.mapper.impl.CommentMapperImpl;
 import org.junit.jupiter.api.Test;
@@ -21,10 +22,18 @@ public class CommentMapperTest {
 
     @Test
     void toDto_mapsBasicCommentFields() {
+
+        User u = new User();
+        u.setId(1L);
+        u.setUsername("bob");
+        u.setEmail("bob@example.com");
+        u.setProfileImageKey("k");
+
         Comment c = new Comment();
         c.setId(77L);
         c.setBody("hello");
         c.setCreatedAt(OffsetDateTime.now());
+        c.setUser(u);
 
         CommentDto dto = commentMapper.toDto(c);
 

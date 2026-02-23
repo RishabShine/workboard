@@ -10,14 +10,11 @@ import org.springframework.stereotype.Component;
 public class MemberMapperImpl implements MemberMapper {
 
     private final RoleMapperImpl roleMapper;
-    private final MilestoneMapperImpl milestoneMapper;
     private final UserMapperImpl userMapper;
 
     public MemberMapperImpl(RoleMapperImpl roleMapper,
-                                   UserMapperImpl userMapper,
-                                   MilestoneMapperImpl milestoneMapper) {
+                                   UserMapperImpl userMapper) {
         this.roleMapper = roleMapper;
-        this.milestoneMapper = milestoneMapper;
         this.userMapper = userMapper;
     }
 

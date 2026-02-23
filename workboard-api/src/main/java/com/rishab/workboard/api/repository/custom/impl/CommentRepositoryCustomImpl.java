@@ -8,6 +8,8 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 
+import java.util.List;
+
 public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
 
     @PersistenceContext
@@ -23,6 +25,18 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
         cq.where(cb.equal(comment.get("ticket").get("id"), ticketId));
 
         return entityManager.createQuery(cq).getResultList().size();
+    }
+
+    @Override
+    public List<Comment> findCommentsByTicketId(Long ticketId) {
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Comment> cq = cb.createQuery(Comment.class);
+        Root<Comment> comment = cq.from(Comment.class);
+
+        cq.where(cb.equal(comment.get("ticket").get("id"), ticketId));
+
+        return entityManager.createQuery(cq).getResultList();
     }
 
 }
