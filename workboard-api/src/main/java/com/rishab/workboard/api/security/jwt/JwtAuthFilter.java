@@ -38,38 +38,38 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 2) Extract token string
+        // extract token string
         String token = header.substring(7);
 
-        // 3) Validate token signature + expiry
+        // validate token signature + expiry
         if (!jwtService.isValid(token)) {
             chain.doFilter(req, res);
             return;
         }
 
-        // 4) If request is not already authenticated, authenticate it using JWT claims
+        // if request is not already authenticated, authenticate it using JWT claims
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             Claims claims = jwtService.parseClaims(token);
 
-            // uid claim is your DB user id
+            // uid claim is the user id
             Long userId = claims.get("uid", Long.class);
             String username = claims.getSubject();
 
             // principal is what @AuthenticationPrincipal will receive
             AuthUser principal = new AuthUser(userId, username);
 
-            // No roles/authorities for now (empty list)
+            // no roles/authorities for now (empty list)
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(principal, null, List.of());
 
-            // Attach request info (ip, etc.)
+            // attach request info (ip, etc.)
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
 
-            // Store authentication for the rest of the request lifecycle
+            // store authentication for the rest of the request lifecycle
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
-        // 5) Continue filter chain
+        // continue filter chain
         chain.doFilter(req, res);
     }
 }
