@@ -124,11 +124,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserSummaryDto> searchUsers(String q, Long currentUserId) {
-
-        // ensure caller exists (useful pre-JWT)
-        userRepository.findById(currentUserId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+    public List<UserSummaryDto> searchUsers(String q) {
 
         // search query should not be empty or null
         if (q == null || q.trim().isEmpty()) {

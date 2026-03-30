@@ -221,14 +221,14 @@ class UserServiceTest {
         noMatch = userRepository.save(noMatch);
 
         // Act: search by username fragment
-        List<UserSummaryDto> byUsername = userService.searchUsers("alpha", caller.getId());
+        List<UserSummaryDto> byUsername = userService.searchUsers("alpha");
 
         assertThat(byUsername).extracting(UserSummaryDto::getId)
                 .contains(match1.getId())
                 .doesNotContain(noMatch.getId());
 
         // Act: search by email fragment
-        List<UserSummaryDto> byEmail = userService.searchUsers("special", caller.getId());
+        List<UserSummaryDto> byEmail = userService.searchUsers("special");
 
         assertThat(byEmail).extracting(UserSummaryDto::getId)
                 .contains(match2.getId())
@@ -246,15 +246,15 @@ class UserServiceTest {
         caller.setPassword("hash");
         caller = userRepository.save(caller);
 
-        assertThat(userService.searchUsers("   ", caller.getId())).isEmpty();
-        assertThat(userService.searchUsers(null, caller.getId())).isEmpty();
+        assertThat(userService.searchUsers("   ")).isEmpty();
+        assertThat(userService.searchUsers(null)).isEmpty();
     }
-
-    @Test
-    @Transactional
-    void searchUsers_whenCallerMissing_throwsNotFound() {
-        assertThatThrownBy(() -> userService.searchUsers("bob", 999999999L))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessageContaining("User not found");
-    }
+//
+//    @Test
+//    @Transactional
+//    void searchUsers_whenCallerMissing_throwsNotFound() {
+//        assertThatThrownBy(() -> userService.searchUsers("bob"))
+//                .isInstanceOf(NotFoundException.class)
+//                .hasMessageContaining("User not found");
+//    }
 }

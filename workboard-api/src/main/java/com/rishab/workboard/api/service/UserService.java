@@ -17,6 +17,6 @@ public interface UserService {
 
     UserSummaryDto createUser(CreateUserRequest req);
 
-    List<UserSummaryDto> searchUsers(String q, Long currentUserId);
+    List<UserSummaryDto> searchUsers(String q);
 
 }
