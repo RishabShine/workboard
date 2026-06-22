@@ -7,6 +7,8 @@ import lombok.Setter;
 @Setter
 public class CreateMilestoneRequest {
 
+    private Long projectId;
+
     private String name;
 
 }

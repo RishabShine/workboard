@@ -7,6 +7,10 @@ import lombok.Setter;
 @Setter
 public class UpdateMilestoneRequest {
 
+    private Long projectId;
+
+    private Long id;
+
     private String name;
 
 }

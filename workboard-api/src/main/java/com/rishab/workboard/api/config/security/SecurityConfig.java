@@ -32,7 +32,7 @@ public class SecurityConfig {
 
                 // Which endpoints are public vs protected
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register", "/login").permitAll()
+                        .requestMatchers("/auth/register", "/auth/login").permitAll()
                         .anyRequest().authenticated()
                 )
 

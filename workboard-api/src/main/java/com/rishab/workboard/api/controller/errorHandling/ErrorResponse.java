@@ -1,4 +1,6 @@
 package com.rishab.workboard.api.controller.errorHandling;
 
-public class ErrorResponse {
-}
+public record ErrorResponse(
+        String error,
+        String message
+) {}
