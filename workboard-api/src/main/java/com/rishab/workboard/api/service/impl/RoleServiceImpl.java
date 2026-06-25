@@ -95,6 +95,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<RoleDto> getRolesByProject(Long userId, Long projectId) {
         requireProjectMember(projectId, userId);
+
         List<Role> roles =  roleRepository.findByProjectId(projectId);
         return roles.stream()
                 .map(roleMapper::toDto)
