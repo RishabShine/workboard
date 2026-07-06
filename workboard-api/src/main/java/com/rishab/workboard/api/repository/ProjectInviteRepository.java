@@ -1,9 +1,10 @@
 package com.rishab.workboard.api.repository;
 
 import com.rishab.workboard.api.domain.ProjectInvite;
+import com.rishab.workboard.api.repository.custom.ProjectInviteRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProjectInviteRepository extends JpaRepository<ProjectInvite, Long>  {
+public interface ProjectInviteRepository extends JpaRepository<ProjectInvite, Long>, ProjectInviteRepositoryCustom {
 }
