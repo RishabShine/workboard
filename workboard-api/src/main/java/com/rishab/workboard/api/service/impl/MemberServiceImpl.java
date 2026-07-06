@@ -147,6 +147,13 @@ public class MemberServiceImpl implements MemberService {
         projectInviteRepository.save(invite);
     }
 
+    @Override
+    public List<ProjectInviteDto> getInvites(Long currentUserId) {
+        List<ProjectInvite> invites =  projectInviteRepository.getInvites(currentUserId);
+        return invites.stream()
+                .map(projectInviteMapper::toDto)
+                .toList();
+    }
 
     @Override
     @Transactional

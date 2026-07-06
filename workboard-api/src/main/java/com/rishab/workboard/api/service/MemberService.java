@@ -17,6 +17,8 @@ public interface MemberService {
 
     void rejectInvite(Long inviteId, Long currentUserId);
 
+    List<ProjectInviteDto> getInvites(Long currentUserId);
+
     MemberDto updateMemberRole(Long projectId, UpdateMemberRequest req, Long currentUserId);
 
 }
