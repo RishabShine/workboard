@@ -3,14 +3,13 @@ import type {
   CreateTicketRequest,
   TicketDetailDto,
   TicketListItemDto,
-  TicketPageDto,
   UpdateTicketRequest,
 } from "@/types/api";
 
 export const ticketApi = {
   getTicketsForProject: async (projectId: number): Promise<TicketListItemDto[]> => {
-    const { data } = await apiClient.get<TicketPageDto>(`/tickets/${projectId}/tickets`);
-    return data.tickets;
+    const { data } = await apiClient.get<TicketListItemDto[]>(`/tickets/${projectId}/tickets`);
+    return data;
   },
 
   getTicket: async (ticketId: number): Promise<TicketDetailDto> => {
